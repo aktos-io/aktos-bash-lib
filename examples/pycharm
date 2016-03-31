@@ -4,4 +4,4 @@
 . ~/bin/aktos-bash-lib/common.sh
 
 echo "Launching PyCharm..."
-silent_run "${SYMLINK_PATH}/pycharm-community-4.5.3/bin/pycharm.sh"
+silent_run "${SYMLINK_PATH}/pycharm-community-4.5.3/bin/pycharm.sh" $*

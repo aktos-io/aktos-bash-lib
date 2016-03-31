@@ -14,5 +14,5 @@ silent_run () {
     # Run in background: 
     #nohup "$*" >/dev/null 2>&1 &
     # "Extra safe" version:
-    nohup "$*" </dev/null >/dev/null 2>&1 &
+    nohup $* </dev/null >/dev/null 2>&1 &
 }
