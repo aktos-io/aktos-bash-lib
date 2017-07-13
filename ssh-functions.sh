@@ -44,3 +44,32 @@ parse_url () {
                 echo "path:$path"
     esac
 }
+
+
+SSH="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
+# Use credentials from global scope:
+#
+# * SSH_USER
+# * SSH_HOST
+# * SSH_PORT
+# * SSH_KEY_FILE
+# * SSH_PATH
+
+
+check_ssh_key () {
+    $SSH -o PasswordAuthentication=no $SSH_USER@$SSH_HOST -p $SSH_PORT -i $SSH_KEY_FILE exit 0 2> /dev/null
+}
+
+ssh_passwd_command () {
+    local cmd=$1
+    $SSH $SSH_USER@$SSH_HOST -p $SSH_PORT $cmd
+}
+
+ssh_id_command() {
+  $SSH -t $SSH_USER@$SSH_HOST -p $SSH_PORT -i $SSH_KEY_FILE $1
+}
+
+get_public_key () {
+    local private_key=$1
+    ssh-keygen -y -f $private_key
+}
