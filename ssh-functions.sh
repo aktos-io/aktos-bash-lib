@@ -62,12 +62,13 @@ check_ssh_key () {
 }
 
 ssh_passwd_command () {
-    local cmd=$1
-    $SSH $SSH_USER@$SSH_HOST -p $SSH_PORT $cmd
+    local params=$@
+    $SSH $SSH_USER@$SSH_HOST -p $SSH_PORT $params
 }
 
 ssh_id_command() {
-  $SSH -t $SSH_USER@$SSH_HOST -p $SSH_PORT -i $SSH_KEY_FILE $1
+    local params=$@
+    $SSH -t $SSH_USER@$SSH_HOST -p $SSH_PORT -i $SSH_KEY_FILE $params
 }
 
 ssh_socket_command () {
