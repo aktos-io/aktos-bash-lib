@@ -1,4 +1,4 @@
-SSH="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3"
+SSH="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -o AddressFamily=inet"
 SSHFS="sshfs -o reconnect,ServerAliveInterval=60,ServerAliveCountMax=3"
 
 # Use credentials from global scope:
