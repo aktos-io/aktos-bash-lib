@@ -1,6 +1,7 @@
 SSH="ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o ExitOnForwardFailure=yes -o AddressFamily=inet"
 SSHFS="sshfs -o reconnect,ServerAliveInterval=60,ServerAliveCountMax=3"
 
+
 # Use credentials from global scope:
 #
 # * SSH_USER
@@ -8,6 +9,12 @@ SSHFS="sshfs -o reconnect,ServerAliveInterval=60,ServerAliveCountMax=3"
 # * SSH_PORT
 # * SSH_KEY_FILE
 # * SSH_PATH
+
+SSH_SOCKET_FILE="/tmp/ssh-$SSH_USER@$SSH_HOST:$SSH_PORT.sock"
+
+ssh_run_via_socket () {
+    $SSH -N -S $SSH_SOCKET_FILE $SSH_HOST $@ &
+}
 
 parse_url () {
     local section=$1
