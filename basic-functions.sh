@@ -56,6 +56,11 @@ echo_red () {
     errcho "\e[1;31m$*\e[0m"
 }
 
+echo_stamp () {
+  local MESSAGE="$(date +'%F %H:%M:%S') - $@"
+  echo $MESSAGE
+}
+
 prompt_yes_no () {
     local message=$1
     local OK_TO_CONTINUE="no"
