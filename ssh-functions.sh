@@ -10,9 +10,10 @@ SSHFS="sshfs -o reconnect,ServerAliveInterval=60,ServerAliveCountMax=3"
 # * SSH_KEY_FILE
 # * SSH_PATH
 
-SSH_SOCKET_FILE="/tmp/ssh-$SSH_USER@$SSH_HOST:$SSH_PORT.sock"
+[ $SSH_SOCKET_FILE ] || SSH_SOCKET_FILE="/tmp/ssh-$SSH_USER@$SSH_HOST:$SSH_PORT.sock"
 
 ssh_run_via_socket () {
+    [ $SSH_HOST ] || SSH_HOST=$(echo $SSH_SOCKET_FILE | cut -d@ -f2 | cut -d':' -f1)
     $SSH -N -S $SSH_SOCKET_FILE $SSH_HOST $@ &
 }
 
