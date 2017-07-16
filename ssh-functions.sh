@@ -84,10 +84,6 @@ ssh_id_command() {
     $SSH -t $SSH_USER@$SSH_HOST -p $SSH_PORT -i $SSH_KEY_FILE $params
 }
 
-ssh_socket_command () {
-    echo "..."
-}
-
 get_public_key () {
     local private_key=$1
     ssh-keygen -y -f $private_key
