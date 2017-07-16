@@ -137,10 +137,16 @@ is_subvolume_readonly () {
     fi
 }
 
-is_btrfs_subvolume() {
-    local subvol=$1
-    btrfs subvolume show "$subvol" >/dev/null 2>&1
+# taken from https://github.com/lxc/lxc/blob/master/templates/lxc-debian.in
+is_btrfs(){
+    [ -e "$1" -a "$(stat -f -c '%T' "$1")" = "btrfs" ]
 }
+
+# Check if given path is the root of a btrfs subvolume
+is_btrfs_subvolume(){
+    [ -d "$1" -a "$(stat -f -c '%T' "$1")" = "btrfs" -a "$(stat -c '%i' "$1")" -eq 256 ]
+}
+# end of https://github.com/lxc/lxc/blob/master/templates/lxc-debian.in
 
 snapshots_in () {
     # usage: FUNC [options] directory
