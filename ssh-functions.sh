@@ -104,3 +104,14 @@ get_fingerprint () {
         echo $fingerprint_line | cut -d ' ' -f 2
     fi
 }
+
+is_sshd_heartbeating () {
+    local host=$1
+    local port=$2
+    local replay="$(echo | timeout 10 nc $host $port 2> /dev/null)"
+    if [[ "$replay" != "" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
