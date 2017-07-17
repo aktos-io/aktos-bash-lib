@@ -30,20 +30,16 @@ mount_point_of () {
 
 
 umount_if_mounted () {
-    local force=$1
-    local flag=""
-    local device=""
-    if [[ "$force" == "--force" ]]; then
-        flag=" -l "
-        device=$2
-        echo "TRYING TO UNMOUNT $device FORCIBLY..."
-    else
-        device=$1
-    fi
-    if grep $device /proc/mounts > /dev/null 2>&1; then
-        echo "umounting $device"
-        umount $flag $device 2> /dev/null
-    fi
+    echo_err "DEPRECATED. USE umount_if_mounted2"
+}
+
+umount_if_mounted2 () {
+    local device=$1
+    local flag=$2
+    echo "unmounting device: $device"
+    # DO NOT USE `grep DEVICE /proc/mounts` since one device might be represented
+    # more than one form (such as LVM parts)
+    umount $flag $device 2> /dev/null
 }
 
 
