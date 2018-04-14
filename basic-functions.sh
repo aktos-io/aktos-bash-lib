@@ -103,6 +103,14 @@ breakpoint () {
     read hello </dev/tty
 }
 
+press_enter_to_continue () {
+    message=$1
+    if [ "$message" == "" ]; then
+        message="Press enter to continue..."
+    fi
+    echo -en $message 
+    read hello </dev/tty
+}
 
 get_line_field () {
     # returns the word after a specific $field in a line
@@ -125,3 +133,11 @@ assert_test () {
         echo_green "Test passed..."
     fi
 }
+
+# taken from https://stackoverflow.com/a/29779745/1952991
+indent() { sed 's/^/  /'; }
+# Usage:
+#
+#   git status | indent
+
+indent2() { sed 's/^/    /'; }
