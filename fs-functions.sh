@@ -41,7 +41,7 @@ umount_if_mounted () {
 }
 
 require_not_mounted () {
-    local target=$(basename $1)
+    local target=$1
     set +e
     mount | grep $target > /dev/null
     local ret=$?
