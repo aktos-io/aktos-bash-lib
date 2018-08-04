@@ -24,3 +24,8 @@ done
 [[ $(whoami) = "root" ]] || { sudo $0 $*; exit 0; }
 
 
+# loop over command output
+btrfs sub list / -R | while read -r sub; do
+     #do work
+    echo $sub
+done   
