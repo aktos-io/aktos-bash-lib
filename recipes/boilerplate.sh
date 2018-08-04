@@ -8,6 +8,9 @@ safe_source () { source $1; set_dir; }
 # rest is the best practices
 # ----------------------------------------------------
 
+# variables
+$_dir  # this script's directory 
+
 # source another bash file 
 safe_source /path/to/bash/file
 
