@@ -8,6 +8,9 @@ safe_source () { source $1; set_dir; }
 # rest is the best practices
 # ----------------------------------------------------
 
+# All checks are done, run as root.
+[[ $(whoami) = "root" ]] || { sudo $0 $*; exit 0; }
+
 # variables
 $_dir  # this script's directory 
 
@@ -20,13 +23,14 @@ for file in Data/*.txt; do
     # ... rest of the loop body
 done
 
-# All checks are done, run as root.
-[[ $(whoami) = "root" ]] || { sudo $0 $*; exit 0; }
-
-
 # loop over command output
 btrfs sub list / -R | while read -r sub; do
      #do work
     echo $sub
 done   
 
+# or, if you want your loop to run in the same context:
+while read -r sub; do
+     #do work
+    echo $sub
+done <<< `btrfs sub list / -R`
