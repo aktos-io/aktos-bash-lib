@@ -93,7 +93,8 @@ get_fingerprint () {
     local str=$@
     # hack for getting ssh-keygen version 
     set +e
-    local x=$(ssh-keygen -l -f /dev/null 2> /dev/null)
+    local hash_param
+    ssh-keygen -E md5 -l -f /dev/null -T /dev/null 2> /dev/null
     if [[ $? -eq 255 ]]; then
         # ssh-keygen is new version, use `-E md5` parameter
         hash_param="-E md5"
