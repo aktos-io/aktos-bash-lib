@@ -42,6 +42,20 @@ umount_if_mounted2 () {
     umount $flag $device 2> /dev/null
 }
 
+umount_if_mounted3 () {
+    local device=$1
+    local flag=$2
+    echo -ne "unmounting device: $device "
+    # DO NOT USE `grep DEVICE /proc/mounts` since one device might be represented
+    # more than one form (such as LVM parts)
+    if mountpoint=$(findmnt -nr -o target -S "$device"); then
+      echo "(which seems to be mounted on $mountpoint)"
+      umount $flag $device
+    else
+      echo "(which does not seem to be mounted)"
+    fi
+}
+
 
 require_not_mounted () {
     local target=$(basename $1)
@@ -111,4 +125,8 @@ find_crypt_partition () {
 exec_limited () {
 	cpulimit -l 30 -f -q -- $*
 	return $?
+}
+
+find_disks () {
+    fdisk -l 2>/dev/null | grep "Disk \/" | grep -v "\/dev\/md" | grep -v "\/dev\/mapper" | awk '{print $2}' | sed -e 's/://g'
 }
