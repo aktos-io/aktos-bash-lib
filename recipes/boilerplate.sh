@@ -4,15 +4,15 @@ set_dir(){ _dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; _sdir=$(dirname
 safe_source () { source $1; set_dir; }
 # end of bash boilerplate
 
+# magic variables
+# $_dir  : this script's (or softlink's) directory 
+# $_sdir : this script's real file's directory
+
+# source another bash file without changin the "magic" variables
+safe_source /path/to/bash/file
+
 # All checks are done, run as root.
 [[ $(whoami) = "root" ]] || { sudo $0 $*; exit 0; }
-
-# variables
-$_dir  # this script's (or softlink's) directory 
-$_sdir # this script's real file's directory
-
-# source another bash file without changin the $_dir and $_sdir variables
-safe_source /path/to/bash/file
 
 # iterate over directory contents 
 for file in Data/*.txt; do
