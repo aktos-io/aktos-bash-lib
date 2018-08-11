@@ -91,7 +91,16 @@ get_public_key () {
 
 get_fingerprint () {
     local str=$@
-    local fingerprint_line=$(bash -c "ssh-keygen -E md5 -l -f /dev/stdin <<<'$str'")
+    # hack for getting ssh-keygen version 
+    set +e
+    local hash_param
+    ssh-keygen -E md5 -l -f /dev/null -T /dev/null 2> /dev/null
+    if [[ $? -eq 255 ]]; then
+        # ssh-keygen is new version, use `-E md5` parameter
+        hash_param="-E md5"
+    fi
+    set -e
+    local fingerprint_line=$(bash -c "ssh-keygen ${hash_param:-} -l -f /dev/stdin <<<'$str'")
     if [[ "$fingerprint_line" != ""  ]]; then
         fingerprint_line=$(echo $fingerprint_line | cut -d ' ' -f 2)
         echo ${fingerprint_line#'MD5:'}
