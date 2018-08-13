@@ -115,7 +115,7 @@ press_enter_to_continue () {
 get_line_field () {
     # returns the word after a specific $field in a line
     local field=$1
-    grep -oP "(?<=$field )[^ ]+"
+    sed "s/.*[^a-z_A-Z]*${field}\s//" | awk '{print $1}';
 }
 
 dirname_two () {
