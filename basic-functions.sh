@@ -103,6 +103,14 @@ breakpoint () {
     read hello </dev/tty
 }
 
+press_enter_to_continue () {
+    message=$1
+    if [ "$message" == "" ]; then
+        message="Press enter to continue..."
+    fi
+    echo -en $message
+    read hello </dev/tty
+}
 
 get_line_field () {
     # returns the word after a specific $field in a line
@@ -163,3 +171,10 @@ function log() {
     file=${BASH_SOURCE[$i-1]}
     echo "${now} $(hostname) $0:${lineno} ${msg}"
 }
+
+# taken from https://stackoverflow.com/a/29779745/1952991
+# Usage:
+#
+#   git status | indent
+indent() { sed 's/^/  /'; }
+indent2() { sed 's/^/    /'; }

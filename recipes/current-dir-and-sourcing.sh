@@ -1,8 +1,7 @@
 #!/bin/bash
 
-set_dir () { DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"; }
+set_dir () { DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"; }; set_dir
 safe_source () { source $1; set_dir; }
-set_dir
 
 SYMLINK_PATH=$(dirname $(readlink -f "$0"))
 

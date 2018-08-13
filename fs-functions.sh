@@ -89,6 +89,15 @@ exec_limited () {
 	return $?
 }
 
+# Physical disk related
+find_disks () {
+    fdisk -l 2>/dev/null \
+        | grep "Disk \/" \
+        | grep -v "\/dev\/md" \
+        | grep -v "\/dev\/mapper" \
+        | awk '{print $2}' | sed -e 's/://g'
+}
+
 # LVM functions
 #--------------
 detach_lvm_parts(){
@@ -101,5 +110,5 @@ detach_lvm_parts(){
 }
 
 attach_lvm_parts(){
-    echo "x"
+    echo "TO BE IMPLEMENTED"
 }

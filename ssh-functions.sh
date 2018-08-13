@@ -13,8 +13,8 @@ SSHFS="sshfs -o reconnect,ServerAliveInterval=60,ServerAliveCountMax=3"
 [ $SSH_SOCKET_FILE ] || SSH_SOCKET_FILE="/tmp/ssh-$SSH_USER@$SSH_HOST:$SSH_PORT.sock"
 
 ssh_socket_run_cmd () {
-    [ $SSH_HOST ] || SSH_HOST=$(echo $SSH_SOCKET_FILE | cut -d@ -f2 | cut -d':' -f1)
-    $SSH -S $SSH_SOCKET_FILE $SSH_HOST $@
+    # SSH does not care the hostname while using socket file
+    $SSH -S $SSH_SOCKET_FILE link-with-server $@
 }
 
 ssh_socket_make_forward () {
