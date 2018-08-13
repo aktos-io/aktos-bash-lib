@@ -27,73 +27,29 @@ mount_point_of () {
     findmnt -n -o TARGET --target $file
 }
 
-
-
 umount_if_mounted () {
-    echo_err "DEPRECATED. USE umount_if_mounted2"
-}
-
-umount_if_mounted2 () {
     local device=$1
+    set +u
     local flag=$2
+    set -u
     echo "unmounting device: $device"
     # DO NOT USE `grep DEVICE /proc/mounts` since one device might be represented
     # more than one form (such as LVM parts)
+    set +e
     umount $flag $device 2> /dev/null
+    set -e
 }
-
-umount_if_mounted3 () {
-    local device=$1
-    local flag=$2
-    echo -ne "unmounting device: $device "
-    # DO NOT USE `grep DEVICE /proc/mounts` since one device might be represented
-    # more than one form (such as LVM parts)
-    if mountpoint=$(findmnt -nr -o target -S "$device"); then
-      echo "(which seems to be mounted on $mountpoint)"
-      umount $flag $device
-    else
-      echo "(which does not seem to be mounted)"
-    fi
-}
-
 
 require_not_mounted () {
-    local target=$(basename $1)
+    local target=$1
+    set +e
     mount | grep $target > /dev/null
     local ret=$?
+    set -e
     if [ $ret == 0 ]; then
         echo_err "$target IS NOT EXPECTED TO BE MOUNTED!"
     fi
 }
-
-mount_unless_mounted () {
-    # mount_if_not_mounted DEVICE MOUNT_POINT
-    grep -qs $2 /proc/mounts
-    [ $? -ne 0 ] && mount -v "$1" "$2"
-}
-
-decrypt_crypted_partition () {
-    find_crypt_partition
-	echo "Decrypting ${CRYPT_DEVICE}..."
-	KEY=""
-	if [[ "$1" != "" ]]; then
-		KEY="--key-file $1"
-	fi
-	cryptsetup $KEY luksOpen "${CRYPT_DEVICE}" "$D_DEVICE" || echo_err "error while decrypting."
-}
-
-remove_lvm_parts () {
-    for lvm_part in swap root; do
-        p="/dev/$ROOT_NAME/$lvm_part"
-        echo "Removing LVM part: $p";
-	    lvchange -a n $p || return 1
-    done
-}
-
-remove_crypted_part () {
-    cryptsetup luksClose "$D_DEVICE_PATH" || return 1
-}
-
 
 require_mounted () {
 	if ! mountpoint $1 > /dev/null 2>&1; then
@@ -101,24 +57,30 @@ require_mounted () {
 	fi
 }
 
+mount_unless_mounted () {
+    # mount_if_not_mounted DEVICE MOUNT_POINT
+    set +o errexit +o pipefail
+    grep -qs $2 /proc/mounts 2> /dev/null
+    local is_mounted=$?
+    set -o errexit -o pipefail
+    [ $is_mounted -ne 0 ] && mount -v "$1" "$2"
+}
 
-get_device () {
-	DEVICE=$(readlink -e /dev/disk/by-id/$KNOWN_DISK)
-    if [[ ! -b $DEVICE ]]; then
-        echo_err "$KNOWN_DISK can not be found."
-    fi
+get_device_by_id () {
+    require_device $(readlink -f /dev/disk/by-id/$1)
+}
+
+get_device_by_uuid () {
+    require_device $(readlink -f /dev/disk/by-uuid/$1)
 }
 
 require_device () {
     local device=$1
-    [ -b $device ] || echo_err "No such partition/device can be found: $device"
-}
-
-find_crypt_partition () {
-	get_device
-    CRYPT_DEVICE=$(blkid | grep $DEVICE | grep crypto_LUKS | awk '{print $1}' | sed -e 's/://g')
-    if [[ ! -b $CRYPT_DEVICE ]]; then
-        echo_err "crypto_LUKS partition can not be found on $DEVICE."
+    if [ -b $device ]; then
+        echo $device
+    else
+        echo_err "No such partition/device can be found: $device"
+        exit 1
     fi
 }
 
@@ -127,6 +89,26 @@ exec_limited () {
 	return $?
 }
 
+# Physical disk related
 find_disks () {
-    fdisk -l 2>/dev/null | grep "Disk \/" | grep -v "\/dev\/md" | grep -v "\/dev\/mapper" | awk '{print $2}' | sed -e 's/://g'
+    fdisk -l 2>/dev/null \
+        | grep "Disk \/" \
+        | grep -v "\/dev\/md" \
+        | grep -v "\/dev\/mapper" \
+        | awk '{print $2}' | sed -e 's/://g'
+}
+
+# LVM functions
+#--------------
+detach_lvm_parts(){
+    local lvm_prefix=$1
+    for part in ${lvm_prefix}-*; do
+        [ -e "$part" ] || continue
+        echo "...detaching $part"
+        lvchange -a n $part
+    done
+}
+
+attach_lvm_parts(){
+    echo "TO BE IMPLEMENTED"
 }
