@@ -21,7 +21,7 @@ echo_info () {
 }
 
 echo_debug () {
-    if $DEBUG; then
+    if [[ ${DEBUG:-} = true ]]; then
         errcho "DEBUG: $*"
     fi
 }

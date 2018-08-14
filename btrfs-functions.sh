@@ -87,7 +87,6 @@ last_snapshot_in () {
 
 is_subvolume_incomplete () {
     local subvol=$1
-    #DEBUG=true
     if [[ "$(get_btrfs_received_uuid $subvol)" == "" ]]; then
         echo_debug "$subvol is incomplete"
         return 0
@@ -95,7 +94,6 @@ is_subvolume_incomplete () {
         echo_debug "$subvol is complete"
         return 1
     fi
-    #DEBUG=false
 }
 
 is_subvolume_readonly () {
