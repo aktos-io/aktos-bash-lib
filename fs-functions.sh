@@ -24,6 +24,7 @@ is_free_space_more_than () {
 
 mount_point_of () {
     local file=$1
+    [[ -e $file ]] || echo_err "No such file found: $file"
     findmnt -n -o TARGET --target $file
 }
 
