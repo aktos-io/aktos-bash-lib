@@ -199,9 +199,17 @@ find_sent_subs(){
 }
 list_subvol_below () {
     local path=$1
+    local include_rw=
+    if [[ ${2:-} = true ]]; then
+        #errcho "Including rw snapshots"
+        include_rw=
+    else
+        include_rw="-r"
+    fi
     local mnt=$(mount_point_of $path)
     local rel_path=${path#$mnt/}
-    btrfs sub list $mnt | get_line_field 'path' | while read -r sub; do
+    #errcho "list_subvol_below: mnt is $mnt"
+    btrfs sub list $include_rw $mnt | get_line_field 'path' | while read -r sub; do
         if [[ $sub = $rel_path/* ]]; then
             echo $mnt/$sub
         fi
