@@ -1,32 +1,3 @@
-btrfs_send_diff () {
-    local parent=$1
-    local current=$2
-    if [[ -z $current ]]; then
-        current=$1
-        echo_yellow "No parent specified, sending whole snapshot ($current)"
-        if prompt_yes_no "Normally this might happen only in new disks. Should we really send whole snapshot?"; then
-            btrfs send $current
-        else
-            echo "Skipped sending $current"
-            return
-        fi
-    else
-        echo_green "Sending difference between $parent and $current"
-        if [[ "$(mount_point_of $parent)" != "$(mount_point_of $current)" ]]; then
-            echo_red "USAGE PROBLEM: parent and current snapshots should reside at the same disk!"
-            return 255
-        fi
-        btrfs send -p $parent --no-data $current 2> /dev/null > /dev/null
-        if [[ $? != 0 ]]; then
-            echo_red "WE DETECT AN ERROR in ${FUNCNAME[0]}! parent: $parent, curr: $current"
-            echo_red "Command was: btrfs send -p $parent --no-data $current"
-            exit
-        else
-            btrfs send -p $parent $current
-        fi
-    fi
-}
-
 take_snapshot () {
     local src=$1
     local dest=$2
@@ -55,6 +26,10 @@ get_btrfs_parent_uuid () {
 }
 
 get_snapshot_in_dest () {
+    # DEPRECATED??
+
+
+
     # get_snapshot_in_dest snapshot remote_folder
     local src=$1
     local dest=$2
@@ -188,4 +163,89 @@ require_being_btrfs_subvolume () {
     if ! is_btrfs_subvolume $subvol; then
     	echo_err "$subvol not found, create it first."
     fi
+}
+
+require_different_disks () {
+    if [[ $(mount_point_of $1) = $(mount_point_of $2) ]]; then
+        echo_err "Source and destination are on the same disk!"
+    fi
+}
+
+get_subvol_list(){
+    btrfs sub list -R -u -r "$1"
+}
+find_sent_subs(){
+    local s=$1  # source
+    local d=$2  # destination
+    get_subvol_list $(mount_point_of $s) | while read -r ssub; do
+        s_rcv=`echo $ssub | get_line_field received_uuid`
+        s_id=`echo $ssub | get_line_field uuid`
+        s_path=`echo $ssub | get_line_field path`
+        get_subvol_list $(mount_point_of $d) | while read -r dsub; do
+            d_rcv=`echo $dsub | get_line_field received_uuid`
+            d_id=`echo $dsub | get_line_field uuid`
+            d_path=`echo $dsub | get_line_field path`
+            if [[ $s_rcv = $d_rcv ]] || [[ $s_id = $d_rcv ]]; then
+                # match found
+                src_subvol="$(mount_point_of $s)/$s_path"
+                dst_subvol="$(mount_point_of $d)/$d_path"
+
+                # print if subvolume is below the source path
+                if [[ $src_subvol = $s/* ]]; then
+                    echo $src_subvol
+                fi
+            fi
+        done
+        #echo $ssub
+    done
+}
+list_subvol_below () {
+    local path=$1
+    local mnt=$(mount_point_of $path)
+    local rel_path=${path#$mnt/}
+    btrfs sub list $mnt | get_line_field 'path' | while read -r sub; do
+        if [[ $sub = $rel_path/* ]]; then
+            echo $mnt/$sub
+        fi
+    done
+}
+
+get_snapshot_roots(){
+    # finds incrementally snapshotted subvolume paths
+    local dirs=`list_subvol_below $1 | xargs dirname | sort | uniq`
+    local excludes=()
+    for i in $dirs; do
+        for j in $dirs; do
+            if [[ $j = $i/* ]]; then
+                # $i is parent, so should be removed from output
+                excludes+=( $i )
+                break
+            fi
+        done
+    done
+    for out in $dirs; do
+        if containsElement $out "${excludes[@]}"; then
+            continue
+        fi
+        echo $out
+    done
+}
+find_missing_subs(){
+    local src=$1
+    local dst=$2
+    comm -23 <( list_subvol_below $src ) <( find_sent_subs $src $dst )
+}
+find_prev_snap(){
+    local target="${1}"
+    shift
+    local list=("${@}")
+    local match=
+    for i in "${list[@]}"; do
+        if [[ $target = $i ]]; then
+            break
+        fi
+        match=$i
+        #echo "searching $target if matches with $i"
+    done
+    echo $match
 }

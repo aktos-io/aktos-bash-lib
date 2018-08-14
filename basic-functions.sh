@@ -178,3 +178,11 @@ function log() {
 #   git status | indent
 indent() { sed 's/^/  /'; }
 indent2() { sed 's/^/    /'; }
+
+containsElement () {
+    # taken from https://stackoverflow.com/a/8574392/1952991
+    local e match="$1"
+    shift
+    for e; do [[ "$e" == "$match" ]] && return 0; done
+    return 1
+}

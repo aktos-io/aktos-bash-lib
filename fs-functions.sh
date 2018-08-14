@@ -84,6 +84,12 @@ require_device () {
     fi
 }
 
+require_different_disks () {
+    if [[ $(mount_point_of $1) = $(mount_point_of $2) ]]; then
+        echo_err "Source and destination are on the same disk!"
+    fi
+}
+
 exec_limited () {
 	cpulimit -l 30 -f -q -- $*
 	return $?
