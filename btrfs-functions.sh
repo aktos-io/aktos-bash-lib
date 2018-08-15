@@ -175,27 +175,30 @@ get_subvol_list(){
 find_sent_subs(){
     local s=$1  # source
     local d=$2  # destination
-    get_subvol_list $(mount_point_of $s) | while read -r ssub; do
+    local s_mnt=$(mount_point_of $s)
+    local d_mnt=$(mount_point_of $d)
+    local s_subvols=$(get_subvol_list $s_mnt)
+    local d_subvols=$(get_subvol_list $d_mnt)
+    while read -r ssub; do
         s_rcv=`echo $ssub | get_line_field received_uuid`
         s_id=`echo $ssub | get_line_field uuid`
         s_path=`echo $ssub | get_line_field path`
-        get_subvol_list $(mount_point_of $d) | while read -r dsub; do
+        while read -r dsub; do
             d_rcv=`echo $dsub | get_line_field received_uuid`
             d_id=`echo $dsub | get_line_field uuid`
             d_path=`echo $dsub | get_line_field path`
             if [[ $s_rcv = $d_rcv ]] || [[ $s_id = $d_rcv ]]; then
                 # match found
-                src_subvol="$(mount_point_of $s)/$s_path"
-                dst_subvol="$(mount_point_of $d)/$d_path"
+                src_subvol="$s_mnt/$s_path"
+                dst_subvol="$d_mnt/$d_path"
 
                 # print if subvolume is below the source path
                 if [[ $src_subvol = $s/* ]]; then
                     echo $src_subvol
                 fi
             fi
-        done
-        #echo $ssub
-    done
+        done <<< "$d_subvols"
+    done <<< "$s_subvols"
 }
 list_subvol_below () {
     local path=$1
