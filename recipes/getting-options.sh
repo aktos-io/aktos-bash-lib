@@ -25,8 +25,8 @@ HELP
 
 
 while :; do
-    case $1 in
-        -h|-\?|--help)
+    case ${1:-} in
+        -h|-\?|--help|'')
             show_help    # Display a usage synopsis.
             exit
             ;;
@@ -57,8 +57,7 @@ while :; do
         *)               # Default case: No more options, so break out of the loop.
             break
     esac
-
-    shift
+    #shift <- do not modify any positional arguments
 done
 
 if [[ ! -f $file ]]; then
