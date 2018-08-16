@@ -8,3 +8,4 @@ safe_source $_dir/btrfs-functions.sh
 safe_source $_dir/fs-functions.sh
 safe_source $_dir/luks-functions.sh
 safe_source $_dir/ssh-functions.sh
+safe_source $_dir/network.sh
