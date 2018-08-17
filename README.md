@@ -4,7 +4,9 @@ BASH functions used in aktos-scripts.
 
 # Usage
 
-`git submodule add https://github.com/aktos-io/aktos-bash-lib lib`
+```console 
+git submodule add https://github.com/aktos-io/aktos-bash-lib lib
+```
 
 ```
 ...boilerplate...
