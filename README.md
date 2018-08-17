@@ -1,15 +1,15 @@
 # aktos-bash-lib
-BASH libraries used by aktos-scripts. 
 
+BASH functions used in aktos-scripts. 
 
 # Usage
 
-`git submodule add https://github.com/aktos-io/aktos-bash-lib`
+`git submodule add https://github.com/aktos-io/aktos-bash-lib lib`
 
 ```
-#!/bin/bash 
+...boilerplate...
 
-. ./aktos-bash-lib/common.sh 
+safe_source ./lib/all.sh 
 
-pause  # this is from aktos-bash-lib/common.sh
+pause  # this is from lib 
 ```
