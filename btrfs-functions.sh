@@ -203,7 +203,6 @@ find_sent_subs(){
             fi
         done <<< "$d_subvols"
     done <<< "$s_subvols"
-    errcho "took $(( $SECONDS - $start )) seconds"
 }
 list_subvol_below () {
     local path=$(echo $1 | sed 's/\/*$//g')
