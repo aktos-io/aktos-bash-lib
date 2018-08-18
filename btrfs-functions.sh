@@ -173,8 +173,11 @@ get_subvol_list(){
     btrfs sub list -R -u -r "$1"
 }
 find_sent_subs(){
-    local s=$1  # source
-    local d=$2  # destination
+    # -------------------------------------
+    # FIXME: while inside while is TOO SLOW
+    # -------------------------------------
+    local s=$(echo $1 | sed 's/\/*$//g')  # source
+    local d=$(echo $2 | sed 's/\/*$//g')  # destination
     local s_mnt=$(mount_point_of $s)
     local d_mnt=$(mount_point_of $d)
     local s_subvols=$(get_subvol_list $s_mnt)
@@ -196,12 +199,14 @@ find_sent_subs(){
                 if [[ $src_subvol = $s/* ]]; then
                     echo $src_subvol
                 fi
+                break
             fi
         done <<< "$d_subvols"
     done <<< "$s_subvols"
+    errcho "took $(( $SECONDS - $start )) seconds"
 }
 list_subvol_below () {
-    local path=$1
+    local path=$(echo $1 | sed 's/\/*$//g')
     local include_rw=
     if [[ ${2:-} = true ]]; then
         #errcho "Including rw snapshots"
@@ -211,7 +216,7 @@ list_subvol_below () {
     fi
     local mnt=$(mount_point_of $path)
     local rel_path=${path#$mnt/}
-    #errcho "list_subvol_below: mnt is $mnt"
+    #errcho "list_subvol_below: mnt is $mnt rel_path is $rel_path"
     btrfs sub list $include_rw $mnt | get_line_field 'path' | while read -r sub; do
         if [[ $sub = $rel_path/* ]]; then
             echo $mnt/$sub
