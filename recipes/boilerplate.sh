@@ -54,7 +54,7 @@ HELP
 POSITIONAL=()
 _count=1
 while :; do
-    POSITIONAL+=("$1") # save for "sudo $0" usage
+    POSITIONAL+=("${1:-}") # save for "sudo $0" usage
     key="${1:-}"
     case $key in
         -h|-\?|--help|'')
