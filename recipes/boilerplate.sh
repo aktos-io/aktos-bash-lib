@@ -4,13 +4,13 @@ safe_source () { [[ ! -z ${1:-} ]] && source $1; _dir="$(cd "$(dirname "${BASH_S
 # end of bash boilerplate
 
 # magic variables
-# $_dir  : this script's (or softlink's) directory 
+# $_dir  : this script's (or softlink's) directory
 # $_sdir : this script's real file's directory
 
 # source another bash file without changin the "magic" variables
 safe_source /path/to/bash/file
 
-# iterate over directory contents 
+# iterate over directory contents
 for file in Data/*.txt; do
     [ -e "$file" ] || continue
     # ... rest of the loop body
@@ -20,7 +20,7 @@ done
 btrfs sub list / -R | while read -r sub; do
      #do work
     echo $sub
-done   
+done
 
 # or, if you want your loop to run in the same context:
 while read -r sub; do
@@ -30,16 +30,9 @@ done <<< `btrfs sub list / -R`
 
 # show help
 show_help(){
-    local script=$(basename $0)
-    local reason=${1:-}
-    [[ ! -z $reason ]] && cat <<REASON
-    -------------------------------
-    ERROR: $reason
-    -------------------------------
-REASON
     cat <<HELP
 
-    $script [options] /path/to/source /path/to/destination
+    $(basename $0) [options] /path/to/source /path/to/destination
 
     Options:
 
@@ -49,29 +42,49 @@ HELP
     exit
 }
 
+die(){
+    echo_red "$1"
+    show_help
+    exit 1
+}
 
-# parsing command line arguments 
-POSITIONAL=()
+
+# Parse command line arguments
+args=("$@")
 _count=1
 while :; do
-    POSITIONAL+=("${1:-}") # save for "sudo $0" usage
     key="${1:-}"
     case $key in
         -h|-\?|--help|'')
             show_help    # Display a usage synopsis.
             exit
             ;;
-        --dry-run)       # Takes an option argument; ensure it has been specified.
-            shift
+        # --------------------------------------------------------
+        --dry-run) shift
             dry_run=true
             ;;
-        *)  # save the positional arguments
+        --root-dir) shift
+            if [[ ! -z ${1:-} ]]; then
+                root_dir=$1
+                shift
+            fi
+            ;;
+        --hostname) shift
+            new_hostname="$1"
+            shift
+            if [[ $new_hostname = "auto" ]]; then
+                new_hostname=$(printf '0x%x' $(date +%s))
+                new_hostname=${new_hostname/0x}
+                echo "Automatically setting hostname to $new_hostname"
+            fi
+            ;;
+        # --------------------------------------------------------
+        *)  # generate the positional arguments
             declare _arg$((_count++))="$1"
             shift
     esac
     [[ -z ${1:-} ]] && break
-done
-set -- "${POSITIONAL[@]}"
+done; set -- "${args[@]}"
 # use $_arg1 in place of $1, $_arg2 in place of $2 and so on, "$@" is intact
 
 # All checks are done, run as root.
