@@ -49,7 +49,9 @@ die(){
 }
 
 # Implement dry-run option
-dry_run=true
+# -----------------------------------------------
+# then run any command with `check_dry_run` prefix
+# check_dry_run btrfs sub snap / /path/to/snapshots
 check_dry_run(){
     if [[ $dry_run = false ]]; then
         "$@"
@@ -57,10 +59,14 @@ check_dry_run(){
         echo "DRY RUN: $@"
     fi
 }
-# then run any command with `check_dry_run` prefix
-# check_dry_run btrfs sub snap / /path/to/snapshots
 
 # Parse command line arguments
+# ---------------------------
+# Initialize parameters
+dry_run=false
+new_hostname=
+root_dir=
+# ---------------------------
 args=("$@")
 _count=1
 while :; do
@@ -96,9 +102,8 @@ while :; do
             show_help
             exit 1
             ;;
-        *)  # generate the positional arguments
-            declare _arg$((_count++))="$1"
-            shift
+        *)  # generate the positional arguments: $_arg1, $_arg2, ...
+            [[ ! -z ${1:-} ]] && declare _arg$((_count++))="$1" && shift
     esac
     [[ -z ${1:-} ]] && break
 done; set -- "${args[@]}"
