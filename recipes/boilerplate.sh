@@ -48,6 +48,17 @@ die(){
     exit 1
 }
 
+# Implement dry-run option
+dry_run=true
+check_dry_run(){
+    if [[ $dry_run = false ]]; then
+        "$@"
+    else
+        echo "DRY RUN: $@"
+    fi
+}
+# then run any command with `check_dry_run` prefix
+# check_dry_run btrfs sub snap / /path/to/snapshots
 
 # Parse command line arguments
 args=("$@")
