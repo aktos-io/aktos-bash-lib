@@ -96,13 +96,13 @@ while :; do
             fi
             ;;
         # --------------------------------------------------------
-        --*)
+        -*) # Handle unrecognized options
             echo
             echo "Unknown option: $1"
             show_help
             exit 1
             ;;
-        *)  # generate the positional arguments: $_arg1, $_arg2, ...
+        *)  # Generate the positional arguments: $_arg1, $_arg2, ...
             [[ ! -z ${1:-} ]] && declare _arg$((_count++))="$1" && shift
     esac
     [[ -z ${1:-} ]] && break
