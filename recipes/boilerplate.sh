@@ -48,6 +48,16 @@ die(){
     exit 1
 }
 
+
+# Cleanup code 
+cleanup(){
+    echo "We are exiting"
+    exit
+}
+
+trap cleanup EXIT
+#trap sure_exit SIGINT # Runs on Ctrl+C
+
 # Implement dry-run option
 # -----------------------------------------------
 # then run any command with `check_dry_run` prefix
