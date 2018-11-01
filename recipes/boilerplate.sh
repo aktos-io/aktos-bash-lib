@@ -119,9 +119,14 @@ while :; do
 done; set -- "${args[@]}"
 # use $_arg1 in place of $1, $_arg2 in place of $2 and so on, "$@" is intact
 
-#Empty argument checking
+# Empty argument checking
 src=${_arg1:-}
 [[ -z $src ]] && show_help "Source can not be empty"
 
 # All checks are done, run as root.
 [[ $(whoami) = "root" ]] || { sudo $0 "$@"; exit 0; }
+
+# Conditional parameter adding
+_param=
+[[ $new_keys = false ]] && _param="$_param --skip-ssh-keys"
+/path/to/myprog --foo bar --baz qux $_param
