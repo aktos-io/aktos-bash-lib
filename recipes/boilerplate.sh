@@ -43,6 +43,7 @@ HELP
 }
 
 die(){
+    echo
     echo_red "$1"
     show_help
     exit 1
