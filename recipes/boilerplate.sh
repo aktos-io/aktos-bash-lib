@@ -29,6 +29,7 @@ while read -r sub; do
 done <<< `btrfs sub list / -R`
 
 # show help
+# -----------------------------------------------
 show_help(){
     cat <<HELP
 
@@ -49,15 +50,19 @@ die(){
     exit 1
 }
 
-
 # Cleanup code 
-cleanup(){
-    echo "We are exiting"
+# -----------------------------------------------
+sure_exit(){
+    echo
+    echo_yellow "Interrupted by user."
     exit
 }
-
+cleanup(){
+    echo "We are exiting."
+    exit
+}
+trap sure_exit SIGINT # Runs on Ctrl+C, before EXIT
 trap cleanup EXIT
-#trap sure_exit SIGINT # Runs on Ctrl+C
 
 # Implement dry-run option
 # -----------------------------------------------
@@ -121,6 +126,7 @@ done; set -- "${args[@]}"
 # use $_arg1 in place of $1, $_arg2 in place of $2 and so on, "$@" is intact
 
 # Empty argument checking
+# -----------------------------------------------
 src=${_arg1:-}
 [[ -z $src ]] && die "Source can not be empty"
 
@@ -128,6 +134,7 @@ src=${_arg1:-}
 [[ $(whoami) = "root" ]] || { sudo $0 "$@"; exit 0; }
 
 # Conditional parameter adding
+# -----------------------------------------------
 _param=
 [[ $new_keys = false ]] && _param="$_param --skip-ssh-keys"
 /path/to/myprog --foo bar --baz qux $_param
