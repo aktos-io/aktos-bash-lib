@@ -50,20 +50,6 @@ die(){
     exit 1
 }
 
-# Cleanup code 
-# -----------------------------------------------
-sure_exit(){
-    echo
-    echo_yellow "Interrupted by user."
-    exit
-}
-cleanup(){
-    echo "We are exiting."
-    exit
-}
-trap sure_exit SIGINT # Runs on Ctrl+C, before EXIT
-trap cleanup EXIT
-
 # Implement dry-run option
 # -----------------------------------------------
 # then run any command with `check_dry_run` prefix
@@ -132,6 +118,21 @@ src=${_arg1:-}
 
 # All checks are done, run as root.
 [[ $(whoami) = "root" ]] || { sudo $0 "$@"; exit 0; }
+
+# Cleanup code (should be after "run as root")
+# -----------------------------------------------
+sure_exit(){
+    echo
+    echo_yellow "Interrupted by user."
+    exit
+}
+cleanup(){
+    echo "We are exiting."
+    exit
+}
+trap sure_exit SIGINT # Runs on Ctrl+C, before EXIT
+trap cleanup EXIT
+
 
 # Conditional parameter adding
 # -----------------------------------------------
