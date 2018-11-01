@@ -121,7 +121,7 @@ done; set -- "${args[@]}"
 
 # Empty argument checking
 src=${_arg1:-}
-[[ -z $src ]] && show_help "Source can not be empty"
+[[ -z $src ]] && die "Source can not be empty"
 
 # All checks are done, run as root.
 [[ $(whoami) = "root" ]] || { sudo $0 "$@"; exit 0; }
