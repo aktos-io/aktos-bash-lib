@@ -30,7 +30,7 @@ done <<< `btrfs sub list / -R`
 
 # Skip comment lines
 while read -r line; do
-  [[ $line = \#* ]] && continue # skip comment lines 
+  [[ $line = \#* ]] || [[ $line = "" ]] && continue # skip comment lines 
   # do work here
 done < /some/file.txt
 
