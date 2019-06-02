@@ -5,6 +5,14 @@ get_free_space_of_snap () {
     df -k --output=avail $snap | sed '2q;d'
 }
 
+get_relative(){
+    current="$1"
+    absolute="$2"
+    echo $(perl -MFile::Spec -e 'print File::Spec->abs2rel("'$absolute'","'$current'")')
+}
+# Example: get relative path according to $PWD:
+# relative=$(get_relative $PWD $mypath)
+
 is_free_space_more_than () {
     local target_size_str=$1
     local target_size=$(echo $target_size_str | numfmt --from=si)
