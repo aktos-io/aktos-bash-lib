@@ -21,7 +21,7 @@ echo_info () {
 }
 
 echo_debug () {
-    if $DEBUG; then
+    if [[ ${DEBUG:-} = true ]]; then
         errcho "DEBUG: $*"
     fi
 }
@@ -103,11 +103,19 @@ breakpoint () {
     read hello </dev/tty
 }
 
+press_enter_to_continue () {
+    message=$1
+    if [ "$message" == "" ]; then
+        message="Press enter to continue..."
+    fi
+    echo -en $message
+    read hello </dev/tty
+}
 
 get_line_field () {
     # returns the word after a specific $field in a line
     local field=$1
-    grep -oP "(?<=$field )[^ ]+"
+    sed "s/.*[^a-z_A-Z]*${field}\s//" | awk '{print $1}';
 }
 
 dirname_two () {
@@ -124,4 +132,29 @@ assert_test () {
     else
         echo_green "Test passed..."
     fi
+}
+
+
+function log() {
+    local msg=$1
+    now=$(date)
+    i=${#FUNCNAME[@]}
+    lineno=${BASH_LINENO[$i-2]}
+    file=${BASH_SOURCE[$i-1]}
+    echo "${now} $(hostname) $0:${lineno} ${msg}"
+}
+
+# taken from https://stackoverflow.com/a/29779745/1952991
+# Usage:
+#
+#   git status | indent
+indent() { sed 's/^/  /'; }
+indent2() { sed 's/^/    /'; }
+
+containsElement () {
+    # taken from https://stackoverflow.com/a/8574392/1952991
+    local e match="$1"
+    shift
+    for e; do [[ "$e" == "$match" ]] && return 0; done
+    return 1
 }

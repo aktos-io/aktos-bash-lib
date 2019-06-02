@@ -10,11 +10,11 @@ SSHFS="sshfs -o reconnect,ServerAliveInterval=60,ServerAliveCountMax=3"
 # * SSH_KEY_FILE
 # * SSH_PATH
 
-[ $SSH_SOCKET_FILE ] || SSH_SOCKET_FILE="/tmp/ssh-$SSH_USER@$SSH_HOST:$SSH_PORT.sock"
+[ ${SSH_SOCKET_FILE:-} ] || SSH_SOCKET_FILE="/tmp/ssh-${SSH_USER:-foo}@${SSH_HOST:-example.com}:${SSH_PORT:-22}.sock"
 
 ssh_socket_run_cmd () {
-    [ $SSH_HOST ] || SSH_HOST=$(echo $SSH_SOCKET_FILE | cut -d@ -f2 | cut -d':' -f1)
-    $SSH -S $SSH_SOCKET_FILE $SSH_HOST $@
+    # SSH does not care the hostname while using socket file
+    $SSH -S $SSH_SOCKET_FILE link-with-server $@
 }
 
 ssh_socket_make_forward () {
@@ -91,7 +91,16 @@ get_public_key () {
 
 get_fingerprint () {
     local str=$@
-    local fingerprint_line=$(bash -c "ssh-keygen -E md5 -l -f /dev/stdin <<<'$str'")
+    # hack for getting ssh-keygen version 
+    set +e
+    local hash_param
+    ssh-keygen -E md5 -l -f /dev/null -T /dev/null 2> /dev/null
+    if [[ $? -eq 255 ]]; then
+        # ssh-keygen is new version, use `-E md5` parameter
+        hash_param="-E md5"
+    fi
+    set -e
+    local fingerprint_line=$(bash -c "ssh-keygen ${hash_param:-} -l -f /dev/stdin <<<'$str'")
     if [[ "$fingerprint_line" != ""  ]]; then
         fingerprint_line=$(echo $fingerprint_line | cut -d ' ' -f 2)
         echo ${fingerprint_line#'MD5:'}
