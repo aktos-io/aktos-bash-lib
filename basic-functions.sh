@@ -83,6 +83,11 @@ get_timestamp () {
 	date +%Y%m%dT%H%M
 }
 
+timestamp_log(){
+        date '+%d.%m.%Y %T'
+}
+
+
 start_timer () {
     #echo_blue "(timer started)"
     start_date=$(date +%s)
