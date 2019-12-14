@@ -61,6 +61,18 @@ echo_stamp () {
   echo $MESSAGE
 }
 
+# Prompt yes/no
+#
+# Usage:
+# 
+# if prompt_yes_no "We are about to format $DEVICE. Are you sure?"; then
+#    # Answered "yes"
+#    echo "OK, formatting $DEVICE"
+# else
+#    # Answered "no"
+#    echo "Nothing has done. Exiting."
+#    exit 1
+# fi
 prompt_yes_no () {
     local message=$1
     local OK_TO_CONTINUE="no"
