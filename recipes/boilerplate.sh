@@ -34,6 +34,19 @@ while read -r line; do
   # do work here
 done < /some/file.txt
 
+# Extendable loop: https://superuser.com/q/1069702/187576
+i=0
+while :; do
+    (("$i" > "${#MODULES[@]}")) && break
+    MODULE_NAME="${MODULES[$i]}"
+    i=$((i+1))
+    
+    # ...
+    if something-happens-only-one-time; then 
+        MODULES+=( "e" )
+    fi
+    # ...
+done 
 
 # Implement dry-run option
 # -----------------------------------------------
