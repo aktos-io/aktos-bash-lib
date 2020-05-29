@@ -48,6 +48,13 @@ while :; do
     # ...
 done 
 
+# Array manipulation 
+# -----------------------------------------------
+# 
+# see https://unix.stackexchange.com/a/395103/65781
+# 
+# -----------------------------------------------
+
 # Implement dry-run option
 # -----------------------------------------------
 # then run any command with `check_dry_run` prefix
