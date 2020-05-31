@@ -37,7 +37,8 @@ die(){
 desc=
 foo=
 # ---------------------------
-args=("$@")
+args_backup=("$@")
+args=()
 _count=1
 while :; do
     key="${1:-}"
@@ -59,15 +60,22 @@ while :; do
         -*) # Handle unrecognized options
             echo
             echo "Unknown option: $1"
-            show_help
+            echo
             exit 1
             ;;
-        *)  # Generate the positional arguments: $_arg1, $_arg2, ...
-            [[ ! -z ${1:-} ]] && declare _arg$((_count++))="$1" && shift
+        *)  # Generate the new positional arguments: $arg1, $arg2, ... and ${args[@]}
+            if [[ ! -z ${1:-} ]]; then
+                declare arg$((_count++))="$1"
+                args+=("$1")
+                shift
+            fi
     esac
     [[ -z ${1:-} ]] && break
-done; set -- "${args[@]}"
-# use $_arg1 in place of $1, $_arg2 in place of $2 and so on, "$@" is intact
+done; set -- "${args_backup[@]}"
+# Use $arg1 in place of $1, $arg2 in place of $2 and so on, 
+# "$@" is in the original state,
+# use ${args[@]} for new positional arguments  
+
 
 # Empty argument checking
 # -----------------------------------------------
