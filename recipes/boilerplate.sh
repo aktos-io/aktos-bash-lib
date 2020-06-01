@@ -37,7 +37,7 @@ done < /some/file.txt
 # Extendable loop: https://superuser.com/q/1069702/187576
 i=0
 while :; do
-    (("$i" > "${#MODULES[@]}")) && break
+    (("$i" >= "${#MODULES[@]}")) && break
     MODULE_NAME="${MODULES[$i]}"
     i=$((i+1))
     
