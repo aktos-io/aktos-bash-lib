@@ -20,7 +20,6 @@ show_help(){
         --foo       : Foo setting (required)
 
 HELP
-    exit
 }
 
 die(){
