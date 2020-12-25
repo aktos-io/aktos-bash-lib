@@ -24,7 +24,7 @@ HELP
 
 die(){
     echo
-    echo_red "$1"
+    echo "$1"
     show_help
     exit 1
 }
@@ -34,7 +34,7 @@ die(){
 # ---------------------------
 # Initialize parameters
 desc=
-foo=
+foo=false
 # ---------------------------
 args_backup=("$@")
 args=()
@@ -49,11 +49,9 @@ while :; do
         # --------------------------------------------------------
         --desc) shift
             desc="$1"
-            shift
             ;;
-        --foo) shift
-            foo="$1"
-            shift
+        --foo|-f)
+            foo=true
             ;;
         # --------------------------------------------------------
         -*) # Handle unrecognized options
@@ -66,8 +64,8 @@ while :; do
             if [[ ! -z ${1:-} ]]; then
                 declare arg$((_count++))="$1"
                 args+=("$1")
-                shift
             fi
+        shift
     esac
     [[ -z ${1:-} ]] && break
 done; set -- "${args_backup[@]}"
@@ -78,7 +76,7 @@ done; set -- "${args_backup[@]}"
 
 # Empty argument checking
 # -----------------------------------------------
-[[ -z ${foo:-} ]] && die "Foo can not be empty"
+[[ -z ${desc:-} ]] && die "Desc can not be empty"
 
 ## For debugging of `this` file
 echo "Foo is: $foo"
