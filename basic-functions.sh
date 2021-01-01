@@ -1,6 +1,4 @@
-errcho () {
-    >&2 echo -e "$*"
-}
+errcho () { >&2 echo -e "$@"; }
 
 echo_err () {
 	errcho "ERROR:"
