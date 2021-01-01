@@ -39,7 +39,7 @@ foo=false
 args_backup=("$@")
 args=()
 _count=1
-while :; do
+while [ $# -gt 0 ]; do
     key="${1:-}"
     case $key in
         -h|-\?|--help|'')
