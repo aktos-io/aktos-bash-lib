@@ -67,6 +67,13 @@ check_dry_run(){
     fi
 }
 
+# Check if array is empty (taken from: https://serverfault.com/a/477506/261445)
+if [ ${#array[@]} -eq 0 ]; then
+    echo "Empty"
+else
+    echo "Not empty"
+fi
+
 # Parse command line arguments
 # see ./parse-arguments.sh
 
