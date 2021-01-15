@@ -7,8 +7,6 @@ safe_source () { [[ ! -z ${1:-} ]] && source $1; _dir="$(cd "$(dirname "${BASH_S
 # $_dir  : this script's (or softlink's) directory
 # $_sdir : this script's real file's directory
 
-# show help
-# -----------------------------------------------
 show_help(){
     cat <<HELP
 
