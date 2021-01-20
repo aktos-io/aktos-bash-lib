@@ -62,8 +62,7 @@ while [ $# -gt 0 ]; do
             fi
             ;;
     esac
-    shift
-    [[ -z ${1:-} ]] && break
+    [[ -z ${1:-} ]] && break || shift
 done; set -- "${args_backup[@]}"
 # Use $arg1 in place of $1, $arg2 in place of $2 and so on, 
 # "$@" is in the original state,
