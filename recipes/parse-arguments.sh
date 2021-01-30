@@ -21,12 +21,17 @@ HELP
 }
 
 die(){
-    echo
-    echo "$1"
-    show_help
+    >&2 echo
+    >&2 echo "$@"
     exit 1
 }
 
+help_die(){
+    >&2 echo
+    >&2 echo "$@"
+    show_help
+    exit 1
+}
 
 # Parse command line arguments
 # ---------------------------
