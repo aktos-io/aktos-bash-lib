@@ -99,3 +99,18 @@ trap cleanup EXIT
 _param=
 [[ $new_keys = false ]] && _param="$_param --skip-ssh-keys"
 /path/to/myprog --foo bar --baz qux $_param
+
+# taken from: https://stackoverflow.com/a/17841619/1952991
+join_by(){ local d=$1; shift; local f=$1; shift; printf %s "$f" "${@/#/$d}"; }
+# join_by , a b c       # => a,b,c
+# join_by ' , ' a b c   # => a , b , c
+# join_by '|' ${array[@]}
+#
+# Note that white spaces are always treated as distinct elements
+
+# Check if an array is empty:
+if [[ ${array[@]} ]]; then
+    echo "Array is not empty"
+else
+    echo "Array is empty"
+fi
