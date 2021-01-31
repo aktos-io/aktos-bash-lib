@@ -58,7 +58,7 @@ while [ $# -gt 0 ]; do
             ;;
         # --------------------------------------------------------
         -*) # Handle unrecognized options
-            die "Unknown option: $1"
+            help_die "Unknown option: $1"
             ;;
         *)  # Generate the new positional arguments: $arg1, $arg2, ... and ${args[@]}
             if [[ ! -z ${1:-} ]]; then
