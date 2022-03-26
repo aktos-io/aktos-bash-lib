@@ -10,6 +10,9 @@ safe_source () { [[ ! -z ${1:-} ]] && source $1; _dir="$(cd "$(dirname "${BASH_S
 # source another bash file without changin the "magic" variables
 safe_source /path/to/bash/file
 
+# Pause script (works also inside a while loop)
+read -p "Press any key to continue ..." </dev/tty
+
 # iterate over directory contents
 for file in Data/*.txt; do
     [ -e "$file" ] || continue
