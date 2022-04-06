@@ -81,7 +81,7 @@ fi
 # see ./parse-arguments.sh
 
 # All checks are done, run as root.
-[[ $(whoami) = "root" ]] || { sudo $0 "$@"; exit 0; }
+[[ $(whoami) = "root" ]] || exec sudo "$0" "$@"
 
 # Cleanup code (should be after "run as root")
 # -----------------------------------------------
