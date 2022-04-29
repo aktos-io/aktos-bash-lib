@@ -81,7 +81,4 @@ done; set -- "${args_backup[@]-}"
 ## For debugging of `this` file
 echo "Foo is: $foo"
 
-# All checks are done, run as root.
-# NOTE: The double quotes around `$@` are very important for
-# parsing arguments. 
-[[ $(whoami) = "root" ]] || { sudo $0 "$@"; exit 0; }
+# All checks are done, run as root starting from this point.
